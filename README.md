@@ -11,7 +11,7 @@ This is a sample test automation framework built using Python, Playwright, and P
 - **Configurable**: Supports configuration via `config.yaml` and environment variables.
 
 ## Project Structure
-
+```
 ├── config.yaml # Configuration file
 ├── conftest.py # Pytest hooks and fixtures
 ├── pages/ # Page Object Model (POM) classes
@@ -20,7 +20,7 @@ This is a sample test automation framework built using Python, Playwright, and P
 ├── logs/ # Logs directory
 ├── screenshots/ # Screenshots directory
 └── requirements.txt # Python dependencies
-
+```
 
 ## Setup Instructions
 
