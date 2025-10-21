@@ -1,0 +1,10 @@
+base_url: "https://www.saucedemo.com/"
+browser: "chromium"  # chromium, firefox, webkit
+headless: false
+timeout: 5000
+
+azure_devops:
+  organization: "ab-inbev-analytics"
+  project: "Analytics Engineering - GAC"
+  test_plan_id: 128263
+  test_suite_id: 128274
