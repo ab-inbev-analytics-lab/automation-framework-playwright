@@ -33,7 +33,7 @@ This is a sample test automation framework built using Python, Playwright, and P
 
 1. Clone the repository:
    ```bash
-   git clone <repository-url>
+   git clone https://github.com/ab-inbev-analytics-lab/automation-framework-playwright
    cd automation-framework
    ```
 2. Install dependencies:
@@ -50,16 +50,16 @@ This is a sample test automation framework built using Python, Playwright, and P
    export AZURE_DEVOPS_PAT="your-pat-token"
    ```
 4. Update config.yaml with other required values.
-Running Tests
-Run all tests:
+5. Running Tests
+   Run all tests:
 
-```bash
-pytest
-```
+   ```bash
+   pytest
+   ```
 
-Logs and Screenshots
-Logs are saved in the logs/ directory.
-Screenshots of failed tests are saved in the screenshots/ directory.
+Logs and Screenshots  
+Logs are saved in the logs/ directory.  
+Screenshots of failed tests are saved in the screenshots/ directory.  
 
 ## Integration with Azure DevOps
 This framework integrates with Azure DevOps Test Plans to:
