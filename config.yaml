@@ -7,4 +7,3 @@ azure_devops:
   organization: "ab-inbev-analytics"
   project: "Analytics Engineering - GAC"
   test_plan_id: 128263
-  test_suite_id: 128274

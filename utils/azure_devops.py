@@ -16,7 +16,6 @@ def _get_base_info():
         config["azure_devops"]["organization"],
         config["azure_devops"]["project"],
         config["azure_devops"]["test_plan_id"],
-        config["azure_devops"]["test_suite_id"]
     )
 
 def create_test_run():
@@ -24,7 +23,7 @@ def create_test_run():
     Create a new test run in Azure DevOps Test Plans.
     Returns the run_id.
     """
-    org, project, plan_id, suite_id = _get_base_info()
+    org, project, plan_id = _get_base_info()
     url = f"https://dev.azure.com/{org}/{project}/_apis/test/runs?api-version=7.0"
 
     payload = {
@@ -33,7 +32,7 @@ def create_test_run():
         "automated": True,
         "state": "InProgress",
         "startDate": datetime.now(UTC).isoformat(),
-        "pointIds": _get_all_point_ids(org, project, plan_id, suite_id)
+        "pointIds": _get_all_point_ids(org, project, plan_id)
     }
 
     logger.info(f"Creating ADO test run for plan {plan_id}...")
@@ -48,29 +47,50 @@ def create_test_run():
         raise RuntimeError("Failed to create test run")
 
 def get_test_results(run_id):
-    org, project, plan_id, suite_id = _get_base_info()
+    org, project, plan_id = _get_base_info()
     results_resp = requests.get(
         f"https://dev.azure.com/{org}/{project}/_apis/test/Runs/{run_id}/Results?api-version=7.0", auth=_get_auth()
     )
     results_resp.raise_for_status()
     results_data = results_resp.json().get("value", [])
     return results_data
-def _get_all_point_ids(org, project, plan_id, suite_id):
-    """Fetch all test point IDs for the given plan/suite."""
-    url = f"https://dev.azure.com/{org}/{project}/_apis/testplan/Plans/{plan_id}/Suites/{suite_id}/TestPoint?api-version=7.0"
-    response = requests.get(url, auth=_get_auth())
-    if response.status_code == 200:
-        points = response.json().get("value", [])
-        return [p["id"] for p in points]
-    else:
-        logger.error(f"Failed to fetch test points: {response.status_code} - {response.text}")
+
+def _get_all_point_ids(org, project, plan_id):
+    """
+    Fetch all test point IDs from all suites in a plan (including nested suites).
+    Azure DevOps returns all suites in a flat list from /Plans/{planId}/suites.
+    """
+    suites_url = f"https://dev.azure.com/{org}/{project}/_apis/testplan/Plans/{plan_id}/suites?api-version=7.0"
+    suites_resp = requests.get(suites_url, auth=_get_auth())
+
+    if suites_resp.status_code != 200:
+        logger.error(f"Failed to fetch suites: {suites_resp.status_code} - {suites_resp.text}")
         return []
+
+    suites = suites_resp.json().get("value", [])
+    logger.info(f"Found {len(suites)} suites in plan {plan_id}")
+
+    all_points = []
+    for suite in suites:
+        suite_id = suite["id"]
+        points_url = f"https://dev.azure.com/{org}/{project}/_apis/testplan/Plans/{plan_id}/Suites/{suite_id}/TestPoint?api-version=7.0"
+        points_resp = requests.get(points_url, auth=_get_auth())
+
+        if points_resp.status_code == 200:
+            points = points_resp.json().get("value", [])
+            ids = [p["id"] for p in points]
+            all_points.extend(ids)
+            logger.info(f"Suite {suite_id} -> {len(ids)} points")
+        else:
+            logger.error(f"Failed to fetch points for suite {suite_id}: {points_resp.status_code} - {points_resp.text}")
+
+    return all_points
 
 def update_test_result(test_case_id, test_result_id, outcome, duration_ms, run_id, comment=""):
     """
     Update a single test case result in the given run.
     """
-    org, project, _, _ = _get_base_info()
+    org, project, _ = _get_base_info()
     url = f"https://dev.azure.com/{org}/{project}/_apis/test/Runs/{run_id}/Results?api-version=7.0"
     payload = [{
         "id": test_result_id,
@@ -97,7 +117,7 @@ def close_test_run(run_id):
     """
     Mark the test run as completed.
     """
-    org, project, _, _ = _get_base_info()
+    org, project, _ = _get_base_info()
     url = f"https://dev.azure.com/{org}/{project}/_apis/test/runs/{run_id}?api-version=7.0"
 
     payload = {
