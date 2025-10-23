@@ -10,7 +10,7 @@ jobs:
   test:
     runs-on: windows-latest
     env:
-      AZURE_DEVOPS_PAT: ${{ secrets.AZURE_PAT_TOKEN }}
+      AZURE_DEVOPS_PAT: ${{ secrets.AZURE_DEVOPS_PAT }}
       APP_USERNAME: ${{ secrets.USERNAME }}
       APP_PASSWORD: ${{ secrets.PASSWORD }}     
 
