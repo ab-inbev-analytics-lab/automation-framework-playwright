@@ -43,6 +43,12 @@ jobs:
           name: pytest-report
           path: report.html
 
+      - name: Upload logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-logs
+          path: logs/*.log
+          
       - name: Generate GitHub Actions summary from JSON (Python)
         run: |
           python - << 'EOF'
@@ -56,12 +62,12 @@ jobs:
           total = summary.get("total", 0)
 
           with open(os.environ["GITHUB_STEP_SUMMARY"], "a") as f:
-              f.write("## 🧪 Test Summary\n\n")
+              f.write("## Test Summary\n\n")
               f.write("| Status | Count |\n")
               f.write("|--------|-------|\n")
-              f.write(f"| ✅ Passed | {passed} |\n")
-              f.write(f"| ❌ Failed | {failed} |\n")
-              f.write(f"| ⚠ Skipped | {skipped} |\n\n")
+              f.write(f"| Passed | {passed} |\n")
+              f.write(f"| Failed | {failed} |\n")
+              f.write(f"| Skipped | {skipped} |\n\n")
               f.write(f"**Total tests:** {total}\n")
           EOF
         shell: bash  # Works on both Windows & Linux
