@@ -18,3 +18,6 @@ class BasePage:
 
     def take_screenshot(self, path):
         self.page.screenshot(path=path)
+    
+    def click_by_text(self, text):
+        self.page.get_by_text(text, exact=True).click()
