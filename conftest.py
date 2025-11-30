@@ -115,3 +115,7 @@ def playwright_instance():
     from playwright.sync_api import sync_playwright
     with sync_playwright() as p:
         yield p
+
+@pytest.fixture(scope="session")
+def user_credentials(request):
+    return request.param

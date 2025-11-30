@@ -1,5 +1,10 @@
+from dotenv import load_dotenv
 import yaml
 import os
+import os
+
+# Load variables from .env file
+load_dotenv()
 
 class ConfigError(Exception):
     """Raised when required config values are missing."""

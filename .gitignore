@@ -2,3 +2,6 @@
 /pages/__pycache__
 /tests/__pycache__
 /utils/__pycache__
+/.env
+/auth_state.json
+/logs/
