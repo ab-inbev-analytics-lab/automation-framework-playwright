@@ -11,6 +11,7 @@ with open("data/credentials.json", "r") as f:
     user_credentials_list = test_data["user_credentials"]
 
 @pytest.mark.parametrize("user_credentials", user_credentials_list)
+@pytest.mark.azure_test_case_id(128285)
 def test_sauce_tc_one(user_credentials):
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=False, args=["--start-maximized"])

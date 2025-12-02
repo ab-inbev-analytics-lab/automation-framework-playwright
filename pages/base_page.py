@@ -21,3 +21,7 @@ class BasePage:
     
     def click_by_text(self, text):
         self.page.get_by_text(text, exact=True).click()
+
+    def validate_text(self, selector, expected_text):
+        actual_text = self.page.locator(selector).text_content()
+        assert actual_text == expected_text, f"Expected '{expected_text}', but got '{actual_text}'"

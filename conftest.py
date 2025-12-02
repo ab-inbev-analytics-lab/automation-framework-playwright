@@ -40,6 +40,10 @@ def pytest_runtest_makereport(item, call):
 
     # Only publish results after the actual test call
     if rep.when == "call" and run_id:
+        # Skip Azure DevOps update if debugging
+        if os.environ.get("DEBUG_MODE", "0") == "1":
+            logger.info("DEBUG_MODE is set. Skipping Azure DevOps status update.")
+            return
         marker = item.get_closest_marker("azure_test_case_id")
         if marker:
             test_case_id = marker.args[0]
